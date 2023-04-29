@@ -1,6 +1,7 @@
 import path from "path";
 import { ChangeEvent, Expression, watch } from "turbowatch";
-import { ChokidarWatcher } from "./chokidarWatcher";
+// import { ChokidarWatcher } from "./chokidarWatcher";
+import { CustomChokidarWatcher } from "turbowatch";
 import { getPackageInfos, createPackageGraph, getWorkspaceRoot, PackageGraph } from "workspace-tools";
 
 const cwd = process.cwd();
@@ -47,33 +48,14 @@ const depPaths = dependencies.map((dep) => {
 console.log(depPaths);
 */
 
-let previousPackage = "";
+// let previousPackage = "";
 const start = Date.now();
-const previousTimeMap = new Map<string, number>();
-previousTimeMap.set("world", start);
-previousTimeMap.set("common", start);
-previousTimeMap.set("config", start);
-previousTimeMap.set("schema-type", start);
-previousTimeMap.set("store", start);
-previousTimeMap.set("cli", start);
-previousTimeMap.set("std-client", start);
-previousTimeMap.set("network", start);
-previousTimeMap.set("recs", start);
-previousTimeMap.set("solecs", start);
-previousTimeMap.set("utils", start);
-previousTimeMap.set("ecs-browser", start);
-previousTimeMap.set("phaserx", start);
-previousTimeMap.set("react", start);
-previousTimeMap.set("services", start);
-previousTimeMap.set("std-contracts", start);
-previousTimeMap.set("noise", start);
-previousTimeMap.set("create-mud", start);
 
-const WATCH_DELAY_SECONDS = 10;
+const unwatchArray: string[] = [];
 
 watch({
   project: workspaceRoot!,
-  Watcher: ChokidarWatcher,
+  Watcher: CustomChokidarWatcher,
   triggers: [
     {
       expression: [
@@ -105,7 +87,10 @@ watch({
         if (first) {
           console.log("Turbowatch started in", Date.now() - start, "ms");
         } else {
-          console.log("File change detected", files);
+          console.log(
+            "File change detected",
+            files.map((f) => f.name)
+          );
         }
         console.log("Building workspace dependencies");
 
@@ -113,18 +98,33 @@ watch({
         const index = filenameTokens.lastIndexOf("packages");
         const changedWorkspace = filenameTokens[index + 1];
 
-        const onChangeTime = new Date();
-        const timeDiff = (onChangeTime - previousTimeMap.get(changedWorkspace)) / 1000; //in ms
-        const seconds = Math.round(timeDiff);
+        // const onChangeTime = new Date();
+        // const timeDiff = (onChangeTime - previousTimeMap.get(changedWorkspace)) / 1000; //in ms
+        // const seconds = Math.round(timeDiff);
+
+        const chokidar = files[0].chokidar;
+        const packagePath = filenameTokens.slice(0, index + 2).join("/");
+        console.log(packagePath);
 
         // console.log(previousPackage, changedWorkspace, seconds);
-        if (previousPackage != changedWorkspace || seconds > WATCH_DELAY_SECONDS) {
-          previousTimeMap.set(changedWorkspace, Date.now());
-          previousPackage = changedWorkspace;
+        // if (previousPackage != changedWorkspace || seconds > WATCH_DELAY_SECONDS) {
+        //   previousTimeMap.set(changedWorkspace, Date.now());
+        //   previousPackage = changedWorkspace;
 
-          // await spawn`turbo build --filter=${changedWorkspace}^...`;
-          await spawn`turbo build --filter=${changedWorkspace}`;
-        }
+        // await spawn`turbo build --filter=${changedWorkspace}^...`;
+
+        chokidar?.unwatch(packagePath);
+        unwatchArray.push(packagePath);
+        console.log("unwatch " + packagePath);
+
+        await spawn`turbo build --filter=${changedWorkspace}`.then(() => {
+          unwatchArray.forEach((element) => {
+            chokidar?.add(element);
+          });
+          console.log("watch " + packagePath);
+        });
+
+        // }
 
         // await spawn`turbo build --filter=store`;
         if (abortSignal?.aborted) return;
