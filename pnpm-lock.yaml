@@ -10,6 +10,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: ^16.2.4
         version: 16.2.4
+      '@kudovs/turbowatch':
+        specifier: ^0.0.3
+        version: 0.0.3
       '@parcel/optimizer-data-url':
         specifier: 2.8.3
         version: 2.8.3(@parcel/core@2.8.3)
@@ -79,9 +82,6 @@ importers:
       turbo:
         specifier: ^1.9.3
         version: 1.9.3
-      turbowatch:
-        specifier: ^2.21.0
-        version: 2.21.0
       typescript:
         specifier: ^4.9.5
         version: 4.9.5
@@ -3164,6 +3164,26 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.15
+    dev: true
+
+  /@kudovs/turbowatch@0.0.3:
+    resolution: {integrity: sha512-2tr37Cz1URobdjC/yNzK2yj95S3bviENnPCIQxJRc7I/RfS3VNQtEuqYrB2kWqWU+8jt2Lz9txGi06rQsw+mgg==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      chalk: 4.1.2
+      chokidar: 3.5.3
+      glob: 9.3.5
+      jiti: 1.18.2
+      micromatch: 4.0.5
+      p-retry: 4.6.2
+      randomcolor: 0.6.2
+      roarr: 7.15.0
+      semver: 7.5.0
+      serialize-error: 11.0.0
+      throttle-debounce: 5.0.0
+      yargs: 17.7.1
+      zx: 7.2.1
     dev: true
 
   /@lerna/child-process@6.6.1:
@@ -16813,26 +16833,6 @@ packages:
       turbo-linux-arm64: 1.9.3
       turbo-windows-64: 1.9.3
       turbo-windows-arm64: 1.9.3
-    dev: true
-
-  /turbowatch@2.21.0:
-    resolution: {integrity: sha512-9eo5nHxtmfCTzt580hT458SRQd4NZ0wJEQXyDrmunvxtwZ3PZEj7FOEWE1yGoHOXeXFNDd4HaID2r1rR/jhyYw==}
-    engines: {node: '>=18'}
-    hasBin: true
-    dependencies:
-      chalk: 4.1.2
-      chokidar: 3.5.3
-      glob: 9.3.5
-      jiti: 1.18.2
-      micromatch: 4.0.5
-      p-retry: 4.6.2
-      randomcolor: 0.6.2
-      roarr: 7.15.0
-      semver: 7.5.0
-      serialize-error: 11.0.0
-      throttle-debounce: 5.0.0
-      yargs: 17.7.1
-      zx: 7.2.1
     dev: true
 
   /tweetnacl-util@0.15.1:
