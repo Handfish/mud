@@ -59,12 +59,10 @@ watch({
         unwatchArray.push(packagePath);
         console.log("unwatch " + packagePath);
 
-        await spawn`turbo build --filter=${changedWorkspace}`.then(() => {
-          unwatchArray.forEach((element) => {
-            watcher?.add?.(element);
-          });
-          console.log("watch " + packagePath);
-        });
+        await spawn(() => {
+          watcher?.add?.(packagePath);
+        })`turbo build --filter=${changedWorkspace}`;
+        watcher?.add?.(packagePath);
 
         if (abortSignal?.aborted) return;
       },
